@@ -44,17 +44,18 @@ export const sendEmail = async ({
   const html = await render(react);
   const plainText = toPlainText(html);
 
+  const emailDomain = process.env.RESEND_SEND_FROM_DOMAIN || "papermark.io";
   const fromAddress =
     from ??
     (marketing
-      ? "Marc from Papermark <marc@ship.papermark.io>"
+      ? `Marc from Papermark <marc@ship.${emailDomain}>`
       : system
-        ? "Papermark <system@papermark.io>"
+        ? `Papermark <system@${emailDomain}>`
         : verify
-          ? "Papermark <system@verify.papermark.io>"
+          ? `Papermark <system@verify.${emailDomain}>`
           : !!scheduledAt
-            ? "Marc Seitz <marc@papermark.io>"
-            : "Marc from Papermark <marc@papermark.io>");
+            ? `Marc Seitz <marc@${emailDomain}>`
+            : `Marc from Papermark <marc@${emailDomain}>`);
 
   try {
     const { data, error } = await resend.emails.send({
