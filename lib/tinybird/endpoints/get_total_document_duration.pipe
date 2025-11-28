@@ -1,6 +1,7 @@
 VERSION 1
 
 NODE endpoint
+TYPE endpoint
 SQL >
     %
     SELECT SUM(duration) AS sum_duration

@@ -34,6 +34,45 @@ function isCustomDomain(host: string) {
   );
 }
 
+// All Papermark app paths that should NOT be treated as document slugs
+const PAPERMARK_APP_PATHS = [
+  "/account",
+  "/branding",
+  "/dashboard",
+  "/datarooms",
+  "/documents",
+  "/settings",
+  "/unsubscribe",
+  "/visitors",
+  "/welcome",
+  "/workflows",
+  "/view",
+  "/verify",
+  "/login",
+  "/register",
+  "/terms",
+  "/privacy",
+  "/404",
+  // Demo/preview pages
+  "/entrance_ppreview_demo",
+  "/nav_ppreview_demo",
+  "/room_ppreview_demo",
+];
+
+function isPapermarkAppPath(path: string): boolean {
+  // Check if path matches any app path (exact match or starts with app path + /)
+  return PAPERMARK_APP_PATHS.some(
+    (appPath) => path === appPath || path.startsWith(appPath + "/")
+  );
+}
+
+// For docs.bookeper.pl: treat paths that are NOT app paths as document share links
+function isDocsBookeperDocumentPath(host: string, path: string): boolean {
+  if (host !== "docs.bookeper.pl") return false;
+  if (path === "/") return false;
+  return !isPapermarkAppPath(path);
+}
+
 export const config = {
   matcher: [
     /*
@@ -63,6 +102,11 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
 
   // For custom domains, we need to handle them differently
   if (isCustomDomain(host || "")) {
+    return DomainMiddleware(req);
+  }
+
+  // For docs.bookeper.pl, route document slugs through DomainMiddleware
+  if (isDocsBookeperDocumentPath(host || "", path)) {
     return DomainMiddleware(req);
   }
 

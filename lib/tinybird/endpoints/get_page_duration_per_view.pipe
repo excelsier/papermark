@@ -1,6 +1,7 @@
 VERSION 4
 
 NODE endpoint
+TYPE endpoint
 SQL >
     %
     SELECT

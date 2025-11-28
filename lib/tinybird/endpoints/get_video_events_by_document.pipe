@@ -4,6 +4,7 @@ DESCRIPTION >
     Get all video views for a specific document
 
 NODE get_document_video_views
+TYPE endpoint
 SQL >
     %
     SELECT
